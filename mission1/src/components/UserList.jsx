@@ -1,16 +1,17 @@
+import Card from "./Layouts/Card";
 import classes from "./UserList.module.css";
 
 const UserList = ({ userInfo }) => {
   return (
-    <div className={classes.users}>
+    <Card className={classes.users}>
       <ul>
         {userInfo.map((item) => (
-          <li>
-            {item.userName}({item.age} years old)
+          <li key={item.id}>
+            {item.username}({item.age} years old)
           </li>
         ))}
       </ul>
-    </div>
+    </Card>
   );
 };
 
