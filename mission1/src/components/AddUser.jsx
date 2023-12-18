@@ -2,31 +2,17 @@ import { useState } from "react";
 import classes from "./AddUser.module.css";
 import Button from "./Layouts/Button";
 import ErrorModal from "./ErrorModal";
+import Card from "./Layouts/Card";
 
-const AddUser = () => {
-  const initUserInfo = {
-    userName: "",
-    age: "",
-  };
-
-  const [userInfo, setUserInfo] = useState(initUserInfo);
+const AddUser = ({ submitHandler, inputValue, setInputValue }) => {
   const [openModal, setOpenModal] = useState(false);
 
   const inputChangeHandler = (e) => {
     console.log(e.target.value);
-    setUserInfo((prev) => ({
+    setInputValue((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
-  };
-
-  const submitHandler = (e) => {
-    e.preventDefault();
-    setUserInfo(initUserInfo);
-    console.log(userInfo.userName, userInfo.age);
-    if (!userInfo.userName || !userInfo.age) {
-      setOpenModal((prev) => !prev);
-    }
   };
 
   const closeModal = (state) => {
@@ -34,13 +20,22 @@ const AddUser = () => {
   };
 
   return (
-    <form onSubmit={submitHandler} className={classes.input}>
+    <form onSubmit={(e) => submitHandler(e, setOpenModal)} className={classes.input}>
       <label>Username</label>
-      <input value={userInfo.userName} onChange={inputChangeHandler} name="userName"></input>
+      <input
+        type="text"
+        value={inputValue.userName}
+        onChange={inputChangeHandler}
+        name="userName"
+      ></input>
       <label>App(years)</label>
-      <input value={userInfo.age} onChange={inputChangeHandler} name="age"></input>
+      <input type="number" value={inputValue.age} onChange={inputChangeHandler} name="age"></input>
       <Button>Add User</Button>
-      {openModal && <ErrorModal closeModalHandler={closeModal} />}
+      {openModal && (
+        <Card>
+          <ErrorModal closeModalHandler={closeModal} />
+        </Card>
+      )}
     </form>
   );
 };
