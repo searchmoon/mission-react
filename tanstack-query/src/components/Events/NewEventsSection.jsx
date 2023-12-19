@@ -1,52 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useQuery } from "@tanstack/react-query";
 
-import LoadingIndicator from '../UI/LoadingIndicator.jsx';
-import ErrorBlock from '../UI/ErrorBlock.jsx';
-import EventItem from './EventItem.jsx';
+import LoadingIndicator from "../UI/LoadingIndicator.jsx";
+import ErrorBlock from "../UI/ErrorBlock.jsx";
+import EventItem from "./EventItem.jsx";
+import { fetchEvents } from "../../util/http.js";
 
 export default function NewEventsSection() {
-  const [data, setData] = useState();
-  const [error, setError] = useState();
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    async function fetchEvents() {
-      setIsLoading(true);
-      const response = await fetch('http://localhost:3000/events');
-
-      if (!response.ok) {
-        const error = new Error('An error occurred while fetching the events');
-        error.code = response.status;
-        error.info = await response.json();
-        throw error;
-      }
-
-      const { events } = await response.json();
-
-      return events;
-    }
-
-    fetchEvents()
-      .then((events) => {
-        setData(events);
-      })
-      .catch((error) => {
-        setError(error);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
-
+  const { data, isPending, error, isError } = useQuery({
+    queryKey: ["events"], // query key를 이용하여 캐시 처리 하고, 나중에 동일한 요청을 전송하면 이전 요청의 응답을 재사용할 수있다.
+    queryFn: fetchEvents,
+    staleTime: 5000, // 불필요한 요청을 방지할 수 있다. 업데이트된 데이터를 가져오기 위한 요청을 자체적으로 전송하기 전에 기다릴 시간을 설정하는 것.
+    //gcTime: 1000 //garbage collection time. 데이터와 캐시를 얼마나 오래 보관할지
+  });
   let content;
 
-  if (isLoading) {
+  if (isPending) {
     content = <LoadingIndicator />;
   }
 
-  if (error) {
+  if (isError) {
     content = (
-      <ErrorBlock title="An error occurred" message="Failed to fetch events" />
+      <ErrorBlock
+        title="An error occurred"
+        message={error.info?.message || "Failed to fetch events"}
+      />
     );
   }
 
