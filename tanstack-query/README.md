@@ -1,8 +1,52 @@
 # React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+- tanstack query 의 핵심개념: HTTP 요청을 전송하고 프론트엔드 사용자 인터페이스를 백엔드 데이터와 동기화된 상태로 유지하는 데 이용하는 라이브러리
+- 이 라이브러리를 이용하면 리액트 앱 내부에서 HTTP 요청을 간편하게 보낼 수 있다. 리액트 프론트엔드를 백엔드에 연결하기가 수월하다.
+- useEffect와 fetch 대신 더 편리하게 쓸 수 있다. (코드가 매우 간결해지고, 훨씬 수월하게 작업 가능)
 
-Currently, two official plugins are available:
+* 학습내용:
+1. 데이터를 가져오고 변형하는 방법
+2. crud(get, post, put, delete) 요청을 전송하는 방법
+3. 이 라이브러리에서 제공하는 캐시를 사용하는 방법
+4. 캐시의 작동 원리, 캐시를 무효화하고 변경하는 방법 등
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+참고 공식문서: https://tanstack.com/query/latest
+
+* 프로그램 설치 및 실행
+이 디렉토리에서는 백엔드 프로그램도 같이 실행해야함.
+cd backend
+npm install  후  npm start
+(프로젝트 작업 동안에는 가동상태 유지하기. 새 터미널창 열고, 메인프로젝트로 가서 또 추가로 실행)
+npm run dev(vite 프로젝트임)
+
+* tanstack query 설치
+npm install @tanstack/react-query (버전 5로 설치하기. 현재 기준)
+
+* useQuery 훅
+useQuery 는 자체적으로 작동해서 HTTP 요청을 전송하고 이 섹션에 필요한 이벤트 데이터를 가져오고 로딩 상태에 대한 정보를 제공한다. 그래서 요청 전송 중에 발생한 오류를 알 수 있다. 이러한 기능이 실행되게 하려면 훅을 구성해야 하는데, 구성하는 방법은 useQuery에 객체를 전달하는 것.
+객체에 들어가는 속성들을 알아보자.
+* queryFn:
+이 객체에 다양한 프로퍼티를 설정할 수 있는데 그중 하나가 queryFn 프로퍼티. (쿼리 함수를 의미) 이 함수를 이용해 실제 요청을 전송할 때 실행할 실제 코드를 정의하는 것.
+Tanstack 쿼리에는 HTTP 요청을 전송하는 로직이 내장돼 있지 않다. 대신 Tanstack 쿼리는 요청을 관리하는 로직을 제공한다. 요청과 관련된 데이터와 발생 가능한 오류를 추적하는 역할 등을 한다. 그래서 요청을 전송하는 코드는 직접 작성해야 하는데, useQuery 를 통해 원하는 방식으로 정의하면된다.
+
+* queryKey:
+전송하는 모든 GET HTTP 요청에는 쿼리 키가 있다. Tanstack 쿼리는 내부에서 이 쿼리 키를 이용해 요청으로 생성된 데이터를 캐시 처리. 그래서 나중에 동일한 요청을 전송하면 이전 요청의 응답을 재사용할 수 있다. 
+리액트 쿼리에서 데이터를 저장하고 재사용하는 기간을 구성할 수 있고 사용자에게 데이터를 더 빨리 제공할 수 있게 해준다. 이미 있는 데이터라면 매번 다시 가져올 필요가 없으니까.. 그래서 모든 쿼리에는 이러한 키가 필요하다.
+그리고 이 키는 배열이다. 이 값의 배열을 리액트 쿼리는 내부적으로 저장한다.
+
+그래서 유사한 값으로 이루어진 유사한 배열을 사용할 때마다 리액트 쿼리는 이 배열을 확인하고 기존 데이터를 재사용. 
+예를 들면 이 배열의 첫 번째 요소로 문자열을 추가하고 events를 식별자로 지정한다. 이 식별자 이름은 원하는 대로 구성할 수 있다. 키에는 값이 여러 개일 수도 있고 유형이 문자열로 제한되지 않는다. 객체를 사용하거나 중첩 배열이나 다른 종류의 값을 사용할 수도 있다. 이 값은 재사용에 필요한 식별자로 사용된다. 
+```
+const { data, isPending, error, isError } = useQuery({
+    queryKey: ["events"], // 배열, 객체 등도 들어갈 수 있다. 값도 여러개일 수 있음
+    queryFn: fetchEvents, 
+  });
+```
+
+이 useQuery가 실행되면 객체를 얻을 수 있다. 객체 결과값 확인해보기. 이 객체에서 객체 구조 분해를 사용해 가장 중요한 요소를 추출할 수 있다. (data, isPending, isError, error, refetch 등 여기서 사용해보겠다.)
+
+예를 들면, useQuery가 반환한 객체에서 data 프로퍼티를 추출 이 프로퍼티에는 실제 응답 데이터가 값으로 들어 있다. 
+- data: 이 데이터는 커스텀 fetch 함수를 통해 반환된다. 그리고 쿼리 실행이 완료되면 결국 data 프로퍼티에 값으로 전달된다. 
+- isPending:이 과정이 즉각적으로 이루어지지는 않고, 먼저 첫 번째 단계로 요청이 전송돼야 하고 응답이 있을 때까지 기다려야 한다. 그래서 이 객체는 isPending 속성을 갖는다. 요청이 여전히 실행 중인지 응답을 받았는지 알려주는 기능.
+- isError: 응답받은 결과가 반드시 data 인것은 아니다. 문제가 있다면, isError 를 반환한다. boolean 값. 응답에 오류 상태코드가 있는경우, 이 경우에는 fetchEvents 함수에 있는 이 코드가 그런 역할을 함. 400 이나 500 같은 응답 코드를 받았는지 확인하고, 코드가 있으면 true를 반환.
+- error: isError가 true 일때, 발생한 오류에 대한 정보가 포함된 프로퍼티.
