@@ -12,6 +12,7 @@ export default function NewEventsSection() {
     staleTime: 5000, // 불필요한 요청을 방지할 수 있다. 업데이트된 데이터를 가져오기 위한 요청을 자체적으로 전송하기 전에 기다릴 시간을 설정하는 것.
     //gcTime: 1000 //garbage collection time. 데이터와 캐시를 얼마나 오래 보관할지
   });
+  
   let content;
 
   if (isPending) {
