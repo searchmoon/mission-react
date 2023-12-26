@@ -14,11 +14,6 @@ export default function FindEventSection() {
     queryFn: ({ signal }) => fetchEvents({ signal, searchTerm }),
   });
 
-  useQuery({
-    queryKey: [],
-    queryFm: () => fetchEvents(searchElement.current.value),
-  });
-
   function handleSubmit(event) {
     event.preventDefault();
     setSearchTerm(searchElement.current.value);

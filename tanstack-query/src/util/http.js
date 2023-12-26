@@ -63,3 +63,37 @@ export async function fetchSelectableImages({ signal }) {
 
   return images;
 }
+
+//event 상세 데이터 불러오기
+export async function fetchEvent({ id, signal }) {
+  let url = `http://localhost:3000/events/${id}`;
+
+  const response = await fetch(`${url}`, { signal });
+
+  if (!response.ok) {
+    const error = new Error("An error occurred while fetching the event");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  const { event } = await response.json();
+
+  return event;
+}
+
+//event 상세 삭제 기능
+export async function deleteEvent({ id }) {
+  const response = await fetch(`http://localhost:3000/events/${id}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok) {
+    const error = new Error("An error occurred while deleting the event");
+    error.code = response.status;
+    error.info = await response.json();
+    throw error;
+  }
+
+  return response.json();
+}
