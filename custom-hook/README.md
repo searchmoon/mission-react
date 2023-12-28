@@ -22,6 +22,7 @@ requestConfig 와 applyData를 추가하게되는데,
 이렇게 하면 상태갱신을 하는 함수인 setTasks외에는 
 외부에서 쓰고있는것이 없으니깐 불변성이 보장됨.
 
-근데 이렇게 useCallback 으로 감싸줘야하는것이 불편하다면 이 useCallback 을 지우고 
+근데 이렇게 useCallback 으로 감싸줘야하는것이 불편하다면 이 useCallback 을 지우고 requestConfig 객체를 useHttp가 아닌, sendRequest에서 받아온다.그렇게 되면 이를 의존성 배열에 추가하지 않아도 되고, 래핑된 함수의 매개변수가 되었다. 
 
+커스텀 훅이 다루는 모든 데이터는 래핑된 함수에서 매개변수로서 받고 있기때문에 외부 의존성은 더 이상 useCallback의 의존성에 넣지 않아도된다. 이렇게 하면 더이상 무한루프가 일어나지 않는다.
 
