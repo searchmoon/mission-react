@@ -1,9 +1,12 @@
-import SimpleInput from './components/SimpleInput';
+
+import SignUp from "./components/SignUp";
+import SimpleInput from "./components/SimpleInput";
 
 function App() {
   return (
     <div className="app">
-      <SimpleInput />
+      {/* <SimpleInput /> */}
+      <SignUp />
     </div>
   );
 }
