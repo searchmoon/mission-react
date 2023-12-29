@@ -50,3 +50,9 @@ const handleSubmit = (event) => {
 ```
 console창을 확인해보면, checkbox 의 acquisition 의 데이터는 array 로 들어가고,
 선택된 값의 value만 들어간다. 
+
+## form 초기화
+form 의 value값들을 초기화하는 방법에는 
+1. button 에 type="reset" 으로 하는 방법도 있지만,
+위의 handleSubmit 이벤트 핸들러가 작동할 때, 
+2. event.target.reset() 으로 초기화 하는 방법도 있다.
