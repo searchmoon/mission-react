@@ -2,27 +2,29 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import MealItem from "./MealItem";
 import styled from "styled-components";
+import useHttp from "../hooks/useHttp";
+import Error from "./Error";
+
+const requestConfig = {};
 
 const Meals = () => {
-  const [mealData, setMealData] = useState([]);
+  const {
+    data: loadedMeals,
+    isLoading,
+    error,
+  } = useHttp("http://localhost:3000/meals", requestConfig, []);
 
-  useEffect(() => {
-    const axiosMeals = async () => {
-      try {
-        const response = await axios("http://localhost:3000/meals");
-        setMealData(response.data);
-        console.log(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  if (isLoading) {
+    return <p className="center">Fetching meals...</p>;
+  }
 
-    axiosMeals();
-  }, []);
+  if (error) {
+    return <Error title="Failed to fetch meals" message={error} />;
+  }
 
   return (
     <MealsStyle>
-      {mealData.map((meal) => (
+      {loadedMeals.map((meal) => (
         <MealItem key={meal.id} meal={meal} />
       ))}
     </MealsStyle>
