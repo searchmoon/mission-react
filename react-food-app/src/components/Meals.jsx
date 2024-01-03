@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import MealItem from "./MealItem";
 import styled from "styled-components";
 import useHttp from "../hooks/useHttp";
