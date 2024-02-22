@@ -1,8 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import AddSong from "../components/AddSong";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { deleteSong, fetchSongs } from "../services/songsApi";
 import { useDeleteSong } from "../custom-hooks/mutations";
+import { useSongs } from "../custom-hooks/queries";
 
 const SongList = () => {
   const navigate = useNavigate();
