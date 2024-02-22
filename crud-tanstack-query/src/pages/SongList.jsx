@@ -1,23 +1,34 @@
+import { useNavigate } from "react-router-dom";
 import AddSong from "../components/AddSong";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteSong, fetchSongs } from "../services/songsApi";
 
 const SongList = () => {
-  const songs = [
-    {
-      id: "950294e6-4891-44e9-986b-71cd4459d899",
-      song: "Tim McGraw",
-      album: "Taylor Swift",
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+
+  const {
+    isPending,
+    isError,
+    data: songs,
+    error,
+  } = useQuery({
+    queryKey: ["songs"],
+    queryFn: fetchSongs,
+  });
+
+  const deleteSongMutation = useMutation({
+    mutationFn: deleteSong,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["songs"] });
+      console.log("Song deleted successfully 🎉");
     },
-    {
-      id: "e1967ff7-a58d-4955-831e-fd7ba59c31e4",
-      song: "Teardrops On My Guitar",
-      album: "Taylor Swift",
-    },
-    {
-      id: "d835bbfc-9dfc-4067-bfe5-700fd280b25a",
-      song: "Shake it Off",
-      album: "1989",
-    },
-  ];
+  });
+
+  if (isPending) return <span>Loading Taylor's songs...</span>;
+  if (isError) return `Error: ${error.message}`;
+
+  const handleDelete = (id) => deleteSongMutation.mutate(id);
 
   return (
     <section>

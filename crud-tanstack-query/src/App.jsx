@@ -1,4 +1,6 @@
 import { Route, Routes } from "react-router-dom";
+import EditSong from "./pages/EditSong";
+import Song from "./pages/Song";
 import SongList from "./pages/SongList";
 
 function App() {
@@ -7,6 +9,8 @@ function App() {
       <h1>The Taylor Swift Apocalypse</h1>
       <Routes>
         <Route path="/" element={<SongList />} />
+        <Route path="/song/:id" element={<Song />} />
+        <Route path="/song/:id/edit" element={<EditSong />} />
       </Routes>
     </>
   );
