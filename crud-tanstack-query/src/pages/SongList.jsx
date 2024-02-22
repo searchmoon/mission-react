@@ -2,28 +2,14 @@ import { useNavigate } from "react-router-dom";
 import AddSong from "../components/AddSong";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteSong, fetchSongs } from "../services/songsApi";
+import { useDeleteSong } from "../custom-hooks/mutations";
 
 const SongList = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
-  const {
-    isPending,
-    isError,
-    data: songs,
-    error,
-  } = useQuery({
-    queryKey: ["songs"],
-    queryFn: fetchSongs,
-  });
+  const { isPending, isError, data: songs, error } = useSongs();
 
-  const deleteSongMutation = useMutation({
-    mutationFn: deleteSong,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["songs"] });
-      console.log("Song deleted successfully 🎉");
-    },
-  });
+  const deleteSongMutation = useDeleteSong();
 
   if (isPending) return <span>Loading Taylor's songs...</span>;
   if (isError) return `Error: ${error.message}`;
