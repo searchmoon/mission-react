@@ -1,19 +1,13 @@
 import { useState } from "react";
+import { useTodoStore } from "../store/store";
 
 const Form = () => {
-  
-  const initValue = {
-    title: "",
-    description: "",
-  };
-
-  const [todo, setTodo] = useState(initValue);
-
-  const [todoList, setTodoList] = useState([]);
+  const { todoList, addTodo, setTodo, todo } = useTodoStore();
 
   const handleClick = (e) => {
     e.preventDefault();
-    setTodoList([...todoList, todo]);
+    addTodo(todo);
+    setTodo({ title: "", description: "" });
   };
 
   const handleChange = (e) => {
