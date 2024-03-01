@@ -1,16 +1,15 @@
-import { useState } from "react";
 import { useTodoStore } from "../store/store";
 
 const Form = () => {
   const { todoList, addTodo, setTodo, todo } = useTodoStore();
 
-  const handleClick = (e) => {
+  const handleClick = (e: React.MouseEvent<HTMLInputElement>) => {
     e.preventDefault();
     addTodo(todo);
     setTodo({ title: "", description: "" });
   };
 
-  const handleChange = (e) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTodo({
       ...todo,
       [e.target.name]: e.target.value,

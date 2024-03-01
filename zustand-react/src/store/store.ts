@@ -1,6 +1,18 @@
-import create from "zustand";
+import { create } from "zustand";
 
-export const useTodoStore = create((set) => ({
+interface Todo {
+  title: string;
+  description: string;
+}
+
+interface TodoStore {
+  todoList: Todo[];
+  addTodo: (newTodo: Todo) => void;
+  setTodo: (changedTodo: Todo) => void;
+  todo: Todo;
+}
+
+export const useTodoStore = create<TodoStore>((set) => ({
   todoList: [],
   addTodo: (newTodo) => set((state) => ({ todoList: [...state.todoList, newTodo] })),
   setTodo: (changedTodo) => set((state) => ({ ...state, todo: changedTodo })),
